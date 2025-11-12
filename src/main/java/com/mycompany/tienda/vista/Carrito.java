@@ -18,6 +18,7 @@ import com.mycompany.tienda.pagos.PagoTransferencia;
 import com.mycompany.tienda.pagos.PagoEfectivo;
 import com.mycompany.tienda.pagos.PagoTarjetaDebito;
 import com.mycompany.tienda.pagos.PagoTarjetadeCredito;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -309,10 +310,8 @@ public class Carrito extends javax.swing.JFrame {
                 opciones[0]);
 
         if (seleccion == 0) {
-            // Seleccionar cliente existente
             return seleccionarClienteExistente();
         } else if (seleccion == 2) {
-            // Redirigir a crear cliente
             JOptionPane.showMessageDialog(this,
                     "Por favor cree el cliente desde el menú principal antes de procesar la venta",
                     "Información",
@@ -320,12 +319,11 @@ public class Carrito extends javax.swing.JFrame {
             return null;
         }
 
-        // Venta sin cliente
         return null;
     }
 
     private Cliente seleccionarClienteExistente() {
-        ControlClientes control = ControlClientes.getInstancia();
+        ControlClientes control = SistemaVentas.getGestorClientes();
 
         if (control.getClientes().isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -335,17 +333,32 @@ public class Carrito extends javax.swing.JFrame {
             return null;
         }
 
-        // Crear array con nombres de clientes
-        Object[] clientes = control.getClientes().values().toArray();
-        Cliente clienteSeleccionado = (Cliente) JOptionPane.showInputDialog(this,
+        ArrayList<String> nombresClientes = new ArrayList<>();
+        ArrayList<Cliente> listaClientes = new ArrayList<>();
+
+        for (Cliente c : control.getClientes().values()) {
+            nombresClientes.add(c.getNombre() + " - " + c.getCedula());
+            listaClientes.add(c);
+        }
+
+        String[] opciones = nombresClientes.toArray(new String[0]);
+
+        String seleccion = (String) JOptionPane.showInputDialog(
+                this,
                 "Seleccione un cliente:",
                 "Clientes",
                 JOptionPane.QUESTION_MESSAGE,
                 null,
-                clientes,
-                clientes[0]);
+                opciones,
+                opciones[0]
+        );
 
-        return clienteSeleccionado;
+        if (seleccion == null) {
+            return null;
+        }
+
+        int indice = nombresClientes.indexOf(seleccion);
+        return listaClientes.get(indice);
     }
 
     private MetodoPago seleccionarMetodoPago() {
@@ -625,7 +638,7 @@ public class Carrito extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(11, 11, 11)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -643,7 +656,7 @@ public class Carrito extends javax.swing.JFrame {
                 .addComponent(labelIVA)
                 .addGap(18, 18, 18)
                 .addComponent(labealTotal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(btnEliminar)

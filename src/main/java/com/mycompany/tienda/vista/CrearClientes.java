@@ -6,6 +6,8 @@ package com.mycompany.tienda.vista;
 
 import com.mycompany.tienda.Cliente;
 import com.mycompany.tienda.control.ControlClientes;
+import com.mycompany.tienda.control.GuardarClientes;
+import com.mycompany.tienda.control.SistemaVentas;
 import javax.swing.JOptionPane;
 
 /**
@@ -173,9 +175,11 @@ public class CrearClientes extends javax.swing.JFrame {
 
         Cliente nuevoCliente = new Cliente(nombreCliente, identificacion, telefono, direccion);
 
-        ControlClientes control = ControlClientes.getInstancia();
+        ControlClientes control = SistemaVentas.getGestorClientes();
 
         control.registrarCliente(nuevoCliente);
+
+        GuardarClientes.guardarEnCSV(control.getClientes(), "Clientes.csv");
 
         String dialogMsg = "Cliente creado con exito!";
 
@@ -189,7 +193,6 @@ public class CrearClientes extends javax.swing.JFrame {
         MainConSesion cuf = new MainConSesion();
         cuf.setVisible(true);
         CrearClientes.this.dispose();
-
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void telefonoTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_telefonoTextActionPerformed

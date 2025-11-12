@@ -35,8 +35,9 @@ public class Cliente {
     }
 
     public void acumularPuntos(double montoCompra) {
-        int nuevosPuntos = (int) (montoCompra / 10.0);
+        int nuevosPuntos = (int) (montoCompra / 100.0);
         this.puntosFidelidad += nuevosPuntos;
+        System.out.println("Puntos acumulados: " + nuevosPuntos + " - Total: " + this.puntosFidelidad);
     }
 
     public double DescuentoFidelidad() {
@@ -82,9 +83,29 @@ public class Cliente {
         return idCliente;
     }
 
+    public int getTotalCompras() {
+        return totalCompras;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setPuntosFidelidad(int puntos) {
+        this.puntosFidelidad = puntos;
+    }
+
+    public void setTotalCompras(int compras) {
+        this.totalCompras = compras;
+    }
+
     @Override
     public String toString() {
-        return nombre; // o lo que quieras mostrar
+        return nombre + " (Cédula: " + cedula + ", Puntos: " + puntosFidelidad + ")";
     }
 
     public String verHistorialDeCompras(List<Venta> todasLasVentas) {
@@ -119,9 +140,19 @@ public class Cliente {
         int comprasEntregadas = 0;
 
         for (Venta v : historial) {
+            texto += "───────────────────────────────────────\n";
             texto += "Venta #" + v.getId() + "\n";
+            texto += "  Factura: " + v.getNumeroFactura() + "\n";
             texto += "  Estado: " + v.getEstado().getNombre() + "\n";
-            texto += "  Total: $" + String.format("%.2f", v.getTotal()) + "\n\n";
+            texto += "  Total: $" + String.format("%.2f", v.getTotal()) + "\n";
+
+            texto += "  Productos:\n";
+            for (ItemVenta item : v.getItems()) {
+                texto += "    - " + item.getCantidad() + "x "
+                        + item.getProducto().getNombre()
+                        + " ($" + String.format("%.2f", item.getSubtotal()) + ")\n";
+            }
+            texto += "\n";
 
             if (v.getEstado().getNombre().equals("ENTREGADA")) {
                 totalGastado += v.getTotal();

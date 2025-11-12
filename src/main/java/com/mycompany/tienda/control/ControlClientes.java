@@ -9,22 +9,12 @@ import java.util.HashMap;
 
 public class ControlClientes {
 
-    private static ControlClientes instancia;
-
     private HashMap<String, Cliente> clientes; // key = cedula
 
     public ControlClientes() {
         this.clientes = new HashMap<>();
     }
 
-    public static ControlClientes getInstancia() {
-        if (instancia == null) {
-            instancia = new ControlClientes();
-        }
-        return instancia;
-    }
-
-    // Registrar nuevo cliente
     public void registrarCliente(Cliente cliente) {
         if (clientes.containsKey(cliente.getCedula())) {
             throw new IllegalArgumentException("Ya existe un cliente con esa cédula");

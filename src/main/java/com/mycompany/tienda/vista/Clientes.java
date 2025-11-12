@@ -30,7 +30,7 @@ public class Clientes extends javax.swing.JFrame {
      */
     public Clientes(ControlClientes controlClientes) {
         initComponents();
-        this.controlClientes = ControlClientes.getInstancia();
+        this.controlClientes = SistemaVentas.getGestorClientes();
         cargarClientes();
         limpiarInfoCliente();
     }
@@ -52,13 +52,16 @@ public class Clientes extends javax.swing.JFrame {
 
         Map<String, Cliente> clientes = controlClientes.getClientes();
 
-        System.out.println("Total de clientes: " + clientes.size());
+        System.out.println("Total de clientes en el sistema: " + clientes.size());
 
-        if (controlClientes.getClientes().isEmpty()) {
+        if (clientes.isEmpty()) {
             usersCombo.addItem("No hay clientes registrados");
+            System.out.println("No hay clientes para mostrar");
         } else {
-            for (Cliente cliente : controlClientes.getClientes().values()) {
-                usersCombo.addItem(cliente.getNombre());
+            for (Cliente cliente : clientes.values()) {
+                String itemTexto = cliente.getNombre() + " - " + cliente.getCedula();
+                usersCombo.addItem(itemTexto);
+                System.out.println("Agregado al combo: " + itemTexto);
             }
         }
     }
@@ -114,7 +117,7 @@ public class Clientes extends javax.swing.JFrame {
         lblPuntosCliente.setText("" + cliente.getPuntosFidelidad());
 
         double descuento = cliente.DescuentoFidelidad() * 100;
-        lblTotalCompras.setText("Descuento: " + (int) descuento + "%");
+        lblTotalCompras.setText("Compras: " + cliente.getTotalCompras());
     }
 
     private void verHistorial() {
@@ -220,7 +223,6 @@ public class Clientes extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -486,15 +488,22 @@ public class Clientes extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void usersComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersComboActionPerformed
-        String nombreSeleccionado = (String) usersCombo.getSelectedItem();
-        if (nombreSeleccionado != null && !nombreSeleccionado.equals("No hay clientes registrados")) {
-            // Buscar el cliente por nombre
-            for (Cliente c : controlClientes.getClientes().values()) {
-                if (c.getNombre().equals(nombreSeleccionado)) {
-                    mostrarInfoCliente(c);
-                    break;
-                }
+        String seleccion = (String) usersCombo.getSelectedItem();
+
+        if (seleccion == null || seleccion.equals("No hay clientes registrados")) {
+            return;
+        }
+
+        String[] partes = seleccion.split(" - ");
+        if (partes.length >= 2) {
+            String cedula = partes[1];
+
+            Cliente cliente = controlClientes.getClientes().get(cedula);
+
+            if (cliente != null) {
+                mostrarInfoCliente(cliente);
             }
+
         }
     }//GEN-LAST:event_usersComboActionPerformed
 

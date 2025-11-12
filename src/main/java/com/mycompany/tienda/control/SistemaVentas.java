@@ -4,6 +4,7 @@
  */
 package com.mycompany.tienda.control;
 
+import com.mycompany.tienda.Cliente;
 import com.mycompany.tienda.Empleado;
 import com.mycompany.tienda.ProductoFisico;
 import com.mycompany.tienda.Venta;
@@ -36,17 +37,28 @@ public class SistemaVentas {
     private static void cargarDatosIniciales() {
         System.out.println("Cargando datos iniciales...");
 
-        // Agregar empleados
         try {
             ArrayList<Empleado> EmpleadosCSV = CargadorEmpleados.cargarDesdeCSV("Empleados.csv");
 
             for (Empleado empleado : EmpleadosCSV) {
-                gestorPersonal.agregarEmpleado(empleado);
+                gestorPersonal.agregarEmpleadoSilencioso(empleado);
             }
             System.out.println("Empleados cargados desde CSV: " + EmpleadosCSV.size());
 
         } catch (Exception e) {
             System.err.println(" Error al cargar empleados desde CSV: " + e.getMessage());
+        }
+
+        try {
+            ArrayList<Cliente> ClientesCSV = CargadorClientes.cargarDesdeCSV("Clientes.csv");
+
+            for (Cliente cliente : ClientesCSV) {
+                gestorClientes.getClientes().put(cliente.getCedula(), cliente);
+            }
+            System.out.println("Clientes cargados desde CSV: " + ClientesCSV.size());
+
+        } catch (Exception e) {
+            System.err.println(" Error al cargar clientes desde CSV: " + e.getMessage());
         }
 
         // Agregar productos

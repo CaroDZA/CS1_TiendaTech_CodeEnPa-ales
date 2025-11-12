@@ -8,7 +8,6 @@ import com.mycompany.tienda.Cajero;
 import com.mycompany.tienda.CarritoDeCompras;
 import com.mycompany.tienda.ProductoFisico;
 import com.mycompany.tienda.Supervisor;
-import com.mycompany.tienda.control.ControlClientes;
 import com.mycompany.tienda.control.SistemaVentas;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -19,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class MainConSesion extends javax.swing.JFrame {
 
-    private ControlClientes controlClientes;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainConSesion.class.getName());
     private static CarritoDeCompras carritoGlobal;
     private javax.swing.JComboBox<String> comboFiltroCategoria;
@@ -397,7 +396,7 @@ public class MainConSesion extends javax.swing.JFrame {
 //aa
     private void jMenuClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuClientesMouseClicked
         // TODO add your handling code here:
-        Clientes cuf = new Clientes(controlClientes);
+        Clientes cuf = new Clientes(SistemaVentas.getGestorClientes());
         cuf.setVisible(true);
         MainConSesion.this.dispose();
     }//GEN-LAST:event_jMenuClientesMouseClicked
