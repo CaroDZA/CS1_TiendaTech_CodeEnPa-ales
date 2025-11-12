@@ -86,5 +86,5 @@ public class ProductoFisico extends ProductoBase {
     public String obtenerInformacion() {
         return nombre + " (" + codigoBarras + ") - Stock: " + stockEnTienda + " - Ubicacion: " + ubicacion;
     }
-    
+
 }

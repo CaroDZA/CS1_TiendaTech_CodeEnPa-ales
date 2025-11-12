@@ -19,9 +19,7 @@ public class ControlInventario {
         this.inventario = new ArrayList<>();
     }
 
-    // Agrega producto al inventario
     public void agregarProducto(ProductoFisico producto) {
-        // Validar que el código de barras no exista
         for (int i = 0; i < inventario.size(); i++) {
             if (inventario.get(i).getCodigoBarras().equals(producto.getCodigoBarras())) {
                 throw new IllegalArgumentException("Ya existe un producto con este código de barras");
@@ -32,12 +30,10 @@ public class ControlInventario {
         System.out.println("Producto agregado: " + producto.getNombre());
     }
 
-    // Elimina producto del inventario
     public void eliminarProducto(String codigoBarras) {
         ProductoFisico producto = null;
         int indiceEliminar = -1;
 
-        // Buscar el producto
         for (int i = 0; i < inventario.size(); i++) {
             if (inventario.get(i).getCodigoBarras().equals(codigoBarras)) {
                 producto = inventario.get(i);
@@ -54,7 +50,6 @@ public class ControlInventario {
         }
     }
 
-    // Busca producto por código de barras
     public ProductoFisico buscarPorCodigo(String codigoBarras) {
         for (int i = 0; i < inventario.size(); i++) {
             if (inventario.get(i).getCodigoBarras().equals(codigoBarras)) {
@@ -64,7 +59,6 @@ public class ControlInventario {
         return null;
     }
 
-    // Actualizar stock manualmente, cuando entra mercancía.
     public void actualizarStock(String codigoBarras, int cantidadAgregar) {
         ProductoFisico producto = buscarPorCodigo(codigoBarras);
 
@@ -80,7 +74,6 @@ public class ControlInventario {
                 + " - Nuevo stock: " + nuevoStock);
     }
 
-    // Reducir stock, cuando se vende un producto
     public void reducirStock(String codigoBarras, int cantidad) {
         ProductoFisico producto = buscarPorCodigo(codigoBarras);
 
@@ -96,7 +89,6 @@ public class ControlInventario {
         int nuevoStock = producto.getStockEnTienda() - cantidad;
         producto.setStockEnTienda(nuevoStock);
 
-        // Alertas automáticas
         if (nuevoStock == 0) {
             System.out.println("Agotado: " + producto.getNombre());
         } else if (nuevoStock < 5) {

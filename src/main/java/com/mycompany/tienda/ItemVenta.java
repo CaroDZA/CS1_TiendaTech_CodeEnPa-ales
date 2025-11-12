@@ -23,14 +23,12 @@ public class ItemVenta {
     private void recalcularSubtotal() {
         if (producto instanceof ProductoFisico) {
             ProductoFisico pf = (ProductoFisico) producto;
-            // Subtotal YA con descuento aplicado
             this.subtotal = pf.calcularPrecioFinal() * cantidad;
         } else {
             this.subtotal = producto.getPrecio() * cantidad;
         }
     }
 
-    // Getters
     public Vendido getProducto() {
         return producto;
     }
@@ -52,7 +50,6 @@ public class ItemVenta {
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         }
 
-        // Validar stock si es producto físico
         if (producto instanceof ProductoFisico) {
             ProductoFisico pf = (ProductoFisico) producto;
             if (cantidad > pf.getStockEnTienda()) {

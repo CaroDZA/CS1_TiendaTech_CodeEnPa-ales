@@ -103,11 +103,6 @@ public class Cliente {
         this.totalCompras = compras;
     }
 
-    @Override
-    public String toString() {
-        return nombre + " (Cédula: " + cedula + ", Puntos: " + puntosFidelidad + ")";
-    }
-
     public String verHistorialDeCompras(List<Venta> todasLasVentas) {
         String texto = "";
 
@@ -166,6 +161,11 @@ public class Cliente {
         texto += "Descuento actual: " + (int) (DescuentoFidelidad() * 100) + "%\n";
 
         return texto;
+    }
+
+    @Override
+    public String toString() {
+        return nombre + " (Cédula: " + cedula + ", Puntos: " + puntosFidelidad + ")";
     }
 
 }

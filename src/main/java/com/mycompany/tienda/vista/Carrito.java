@@ -12,6 +12,7 @@ import com.mycompany.tienda.Supervisor;
 import com.mycompany.tienda.Venta;
 import com.mycompany.tienda.control.ControlClientes;
 import com.mycompany.tienda.control.ControlPersonal;
+import com.mycompany.tienda.control.GuardarClientes;
 import com.mycompany.tienda.control.SistemaVentas;
 import com.mycompany.tienda.modelo.interfaces.MetodoPago;
 import com.mycompany.tienda.pagos.PagoTransferencia;
@@ -69,16 +70,19 @@ public class Carrito extends javax.swing.JFrame {
         btnDescuentoEspecial.addActionListener(e -> aplicarDescuentoEspecial());
 
         java.awt.Container contentPane = getContentPane();
-        btnDescuentoEspecial.setBounds(260, 520, 250, 30);
-        contentPane.add(btnDescuentoEspecial);
+
+        javax.swing.JPanel panelBotonDescuento = new javax.swing.JPanel();
+        panelBotonDescuento.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        panelBotonDescuento.add(btnDescuentoEspecial);
+
+        panelBotonDescuento.setBounds(44, 455, 375, 50);
+        contentPane.add(panelBotonDescuento);
         contentPane.revalidate();
     }
 
     private void cargarDatosCarrito() {
-        // Limpiar tabla
         modeloTabla.setRowCount(0);
 
-        // Cargar items del carrito
         for (ItemVenta item : carritoCompras.getItems()) {
             modeloTabla.addRow(new Object[]{
                 item.getProducto().getNombre(),
@@ -87,8 +91,6 @@ public class Carrito extends javax.swing.JFrame {
                 String.format("$%.2f", item.getSubtotal())
             });
         }
-
-        // Actualizar totales
         actualizarTotales();
     }
 
@@ -102,7 +104,6 @@ public class Carrito extends javax.swing.JFrame {
         labelDescuentos.setText(String.format("$%.2f", descuentos));
         labelIVA.setText(String.format("$%.2f", iva));
         labealTotal.setText(String.format("$%.2f", total));
-
     }
 
     private void aplicarDescuentoEspecial() {
@@ -284,6 +285,10 @@ public class Carrito extends javax.swing.JFrame {
 
                 if (confirmarEntrega == JOptionPane.YES_OPTION) {
                     venta.marcarComoEntregada();
+                    GuardarClientes.guardarEnCSV(
+                            SistemaVentas.getGestorClientes().getClientes(),
+                            "Clientes.csv"
+                    );
                     JOptionPane.showMessageDialog(this,
                             "Productos entregados\nCliente obtuvo sus puntos",
                             "Completado",
@@ -656,7 +661,7 @@ public class Carrito extends javax.swing.JFrame {
                 .addComponent(labelIVA)
                 .addGap(18, 18, 18)
                 .addComponent(labealTotal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(btnEliminar)

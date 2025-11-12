@@ -156,7 +156,7 @@ public class CarritoDeCompras {
         }
         double descuentoPuntos = Clientes.getDescuentoPuntosCanjeados();
 
-        return descuentoProductos + descuentoFidelidad + this.descuentoEspecial + this.descuentoPorPuntos;
+        return descuentoProductos + descuentoFidelidad + this.descuentoEspecial + descuentoPuntos;
     }
 
     public double calcularIVA() {

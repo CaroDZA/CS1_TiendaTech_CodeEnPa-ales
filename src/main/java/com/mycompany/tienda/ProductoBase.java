@@ -54,8 +54,6 @@ public abstract class ProductoBase implements Vendido {
         return categoria;
     }
 
-    //Setters
-    //Validación para nombre vacío
     public void setNombre(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre del producto no puede estar vacio");
@@ -63,7 +61,6 @@ public abstract class ProductoBase implements Vendido {
         this.nombre = nombre;
     }
 
-    // Validacion para precio
     public void setPrecio(double precio) {
 
         if (precio < 0.01) {
@@ -102,7 +99,6 @@ public abstract class ProductoBase implements Vendido {
 
         String categoriaMayuscula = categoria.trim().toUpperCase();
 
-        // Validar que no exista
         for (int i = 0; i < categoriasValidas.size(); i++) {
             if (categoriasValidas.get(i).equals(categoriaMayuscula)) {
                 throw new IllegalArgumentException("La categoría ya existe");

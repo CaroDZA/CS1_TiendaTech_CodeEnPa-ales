@@ -5,8 +5,8 @@
 package com.mycompany.tienda.vista;
 
 import com.mycompany.tienda.Cliente;
-import com.mycompany.tienda.Venta;
 import com.mycompany.tienda.control.ControlClientes;
+import com.mycompany.tienda.control.GuardarClientes;
 import com.mycompany.tienda.control.SistemaVentas;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -33,10 +33,6 @@ public class Clientes extends javax.swing.JFrame {
         this.controlClientes = SistemaVentas.getGestorClientes();
         cargarClientes();
         limpiarInfoCliente();
-    }
-
-    private Clientes() {
-
     }
 
     public static double getDescuentoPuntosCanjeados() {
@@ -117,7 +113,7 @@ public class Clientes extends javax.swing.JFrame {
         lblPuntosCliente.setText("" + cliente.getPuntosFidelidad());
 
         double descuento = cliente.DescuentoFidelidad() * 100;
-        lblTotalCompras.setText("Compras: " + cliente.getTotalCompras());
+        lblTotalCompras.setText("Compras: " + cliente.getTotalCompras() + " | Descuento: " + (int) descuento + "%");
     }
 
     private void verHistorial() {
@@ -193,10 +189,8 @@ public class Clientes extends javax.swing.JFrame {
                     puntosACanjear
             );
 
-            // Restar puntos del cliente
             clienteActual.restarPuntos(puntosACanjear);
 
-            // Guardar el descuento para aplicarlo en la próxima compra
             descuentoPuntosCanjeados = descuento;
 
             JOptionPane.showMessageDialog(this,
@@ -210,6 +204,10 @@ public class Clientes extends javax.swing.JFrame {
                     JOptionPane.INFORMATION_MESSAGE);
 
             mostrarInfoCliente(clienteActual);
+            GuardarClientes.guardarEnCSV(
+                    SistemaVentas.getGestorClientes().getClientes(),
+                    "Clientes.csv"
+            );
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
