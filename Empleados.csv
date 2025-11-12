@@ -1,0 +1,8 @@
+id,nombre,usuario,contrasena,activo,tipo
+7854,Juan Ochoa,jsupervisor,super123,true,Supervisor
+7855,Lina Ramírez,lsupervisor,super456,true,Supervisor
+5854,Maria Camila Piedrahita,mcajera,cajera123,true,Cajero
+5855,Pedro Infante,pcajero,cajero123,false,Cajero
+5856,Juliana Gómez,jcajera,caja456,true,Cajero
+5857,Esteban López,ecajero,caja789,true,Cajero
+5858,Laura Castaño,lcajera,caja321,false,Cajero
