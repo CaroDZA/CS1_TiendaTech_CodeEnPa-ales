@@ -4,8 +4,7 @@
  */
 package com.mycompany.tienda;
 
-import com.mycompany.tienda.estados.TareaPendiente;
-import com.mycompany.tienda.modelo.interfaces.EstadoTarea;
+import com.mycompany.tienda.control.EstadoTarea;
 import java.time.LocalDateTime;
 
 /**
@@ -30,7 +29,7 @@ public class Tarea {
         this.tecnicoAsignado = tecnicoAsignado;
         this.cliente = cliente;
         this.fechaHora = LocalDateTime.now();
-        this.estado = new TareaPendiente();
+        this.estado = EstadoTarea.PENDIENTE;
     }
 
     public void asignarTecnico(Tecnico tecnico) {

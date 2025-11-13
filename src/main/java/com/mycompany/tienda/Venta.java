@@ -3,13 +3,13 @@ package com.mycompany.tienda;
 import com.mycompany.tienda.modelo.interfaces.MetodoPago;
 import com.mycompany.tienda.modelo.interfaces.Vendido;
 import com.mycompany.tienda.control.ControlInventario;
-import com.mycompany.tienda.modelo.interfaces.EstadoVenta;
+import com.mycompany.tienda.control.EstadoVenta;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Venta implements EstadoVenta {
+public class Venta {
 
     private static int contadorVentas = 0;
 
@@ -36,7 +36,7 @@ public class Venta implements EstadoVenta {
         this.items = new ArrayList<>();
         this.productos = new ArrayList<>();
         this.fechaHora = LocalDateTime.now();
-        this.estado = new com.mycompany.tienda.estados.EstadoEnProceso();
+        this.estado = EstadoVenta.EN_PROCESO;
         this.subtotal = 0.0;
         this.descuentos = 0.0;
         this.iva = 0.0;
@@ -254,36 +254,6 @@ public class Venta implements EstadoVenta {
 
     public int getId() {
         return id;
-    }
-
-    @Override
-    public String getNombre() {
-        return this.estado.getNombre();
-    }
-
-    @Override
-    public boolean puedeAgregarProductos() {
-        return this.estado.puedeAgregarProductos();
-    }
-
-    @Override
-    public boolean puedeConfirmarPago() {
-        return this.estado.puedeConfirmarPago();
-    }
-
-    @Override
-    public boolean puedeEntregar() {
-        return this.estado.puedeEntregar();
-    }
-
-    @Override
-    public boolean puedeCancelar() {
-        return this.estado.puedeCancelar();
-    }
-
-    @Override
-    public EstadoVenta transicionar(String comando) {
-        return this.estado.transicionar(comando);
     }
 
 }

@@ -16,7 +16,6 @@ public class Supervisor extends Empleado {
 
     @Override
     public boolean tienePermiso(String accion) {
-        // Supervisores tienen todos los permisos
         return true;
     }
 
@@ -27,14 +26,6 @@ public class Supervisor extends Empleado {
         }
         System.out.println("Descuento especial de " + porcentaje + "% autorizado por: " + nombre);
         return true;
-    }
-
-    public boolean autorizarVentaMayor(double monto) {
-        if (monto > 50000) {
-            System.out.println(" Venta mayor ($" + monto + ") autorizada por: " + nombre);
-            return true;
-        }
-        return true; // Ventas menores no requieren autorización
     }
 
     public void desactivarEmpleado(Empleado empleado) {

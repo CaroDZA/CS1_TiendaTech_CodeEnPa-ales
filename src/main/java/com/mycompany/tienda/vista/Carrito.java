@@ -41,8 +41,6 @@ public class Carrito extends javax.swing.JFrame {
     public Carrito() {
         initComponents();
         inicializarCarrito();
-        crearPanelTotales();
-        crearBotonDescuentoEspecial();
         cargarDatosCarrito();
     }
 
@@ -255,9 +253,6 @@ public class Carrito extends javax.swing.JFrame {
                 }
             }
         }
-
-        reducirStockInventario();
-
         try {
             Venta venta = new Venta(carritoCompras.getCajero(), clienteSeleccionado);
 
@@ -675,7 +670,7 @@ public class Carrito extends javax.swing.JFrame {
 
     private void crearPanelTotales() {
 
-        javax.swing.JPanel panelTotales = new javax.swing.JPanel();
+        panelTotales = new javax.swing.JPanel();
         panelTotales.setBorder(javax.swing.BorderFactory.createTitledBorder("Resumen"));
         panelTotales.setLayout(new java.awt.GridLayout(4, 2, 10, 5));
 
