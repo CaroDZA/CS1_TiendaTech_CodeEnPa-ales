@@ -6,6 +6,7 @@ package com.mycompany.tienda.control;
 
 import com.mycompany.tienda.Empleado;
 import com.mycompany.tienda.Tecnico;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -88,6 +89,21 @@ public class ControlPersonal {
             }
         }
         return null;
+    }
+
+    public ArrayList<Tecnico> obtenerTecnicosDisponibles() {
+        ArrayList<Tecnico> tecnicos = new ArrayList<>();
+
+        for (Empleado empleado : empleados.values()) {
+            if (empleado instanceof Tecnico && empleado.esActivo()) {
+                Tecnico tecnico = (Tecnico) empleado;
+                if (tecnico.estaDisponible()) {
+                    tecnicos.add(tecnico);
+                }
+            }
+        }
+
+        return tecnicos;
     }
 
 }

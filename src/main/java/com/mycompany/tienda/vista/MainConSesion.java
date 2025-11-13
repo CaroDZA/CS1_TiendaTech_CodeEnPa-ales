@@ -50,6 +50,11 @@ public class MainConSesion extends javax.swing.JFrame {
         carritoGlobal = new CarritoDeCompras(cajero, null);
     }
 
+    public static void setCarritoGlobal(CarritoDeCompras carrito) {
+        carritoGlobal = carrito;
+        System.out.println(" Carrito global establecido");
+    }
+
     public static CarritoDeCompras getCarritoGlobal() {
         return carritoGlobal;
     }

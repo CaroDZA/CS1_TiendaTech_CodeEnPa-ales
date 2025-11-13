@@ -33,6 +33,38 @@ public enum EstadoTarea {
         @Override
         public EstadoTarea transicionar(String accion) {
             if (accion.equals("ASIGNAR_TECNICO")) {
+                return EN_ESPERA;
+            }
+            if (accion.equals("CANCELAR")) {
+                return CANCELADA;
+            }
+            return this;
+        }
+    },
+    EN_ESPERA("EN ESPERA") {
+        @Override
+        public boolean puedeAsignarTecnico() {
+            return true; // Se puede reasignar en espera
+        }
+
+        @Override
+        public boolean puedeIniciar() {
+            return true;
+        }
+
+        @Override
+        public boolean puedeCompletar() {
+            return false;
+        }
+
+        @Override
+        public boolean puedeCancelar() {
+            return true;
+        }
+
+        @Override
+        public EstadoTarea transicionar(String accion) {
+            if (accion.equals("INICIAR")) {
                 return EN_PROCESO;
             }
             if (accion.equals("CANCELAR")) {

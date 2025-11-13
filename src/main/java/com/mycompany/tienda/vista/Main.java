@@ -8,6 +8,7 @@ package com.mycompany.tienda.vista;
  *
  * @author samue
  */
+
 public class Main extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
@@ -36,6 +37,7 @@ public class Main extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         SupervisorIniciarS = new javax.swing.JMenuItem();
         VendedorInicioS = new javax.swing.JMenuItem();
+        TecnicoInicioS = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,6 +72,14 @@ public class Main extends javax.swing.JFrame {
         jMenu2.add(jMenu3);
 
         jMenuBar1.add(jMenu2);
+
+        TecnicoInicioS.setText("Tecnico");
+        TecnicoInicioS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TecnicoInicioSMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(TecnicoInicioS);
 
         setJMenuBar(jMenuBar1);
 
@@ -110,34 +120,42 @@ public class Main extends javax.swing.JFrame {
     private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
 
     }//GEN-LAST:event_jMenu2ActionPerformed
+
+    private void TecnicoInicioSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TecnicoInicioSMouseClicked
+        // TODO add your handling code here:
+        IniciarSesionT tecLogin = new IniciarSesionT();
+        tecLogin.setVisible(true);
+        Main.this.dispose();
+    }//GEN-LAST:event_TecnicoInicioSMouseClicked
     
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /* Set the Nimbus look and feel */
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+     */
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
+    } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+        logger.log(java.util.logging.Level.SEVERE, null, ex);
     }
+    //</editor-fold>
+
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem SupervisorIniciarS;
+    private javax.swing.JMenu TecnicoInicioS;
     private javax.swing.JMenuItem VendedorInicioS;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu2;

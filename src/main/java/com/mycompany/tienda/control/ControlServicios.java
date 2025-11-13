@@ -10,21 +10,15 @@ import java.util.ArrayList;
 public class ControlServicios {
 
     private ArrayList<Tarea> tareas;
-    private ArrayList<Tecnico> tecnicos;
 
     public ControlServicios() {
         this.tareas = new ArrayList<>();
-        this.tecnicos = new ArrayList<>();
-    }
-
-    public void registrarTecnico(Tecnico tecnico) {
-        tecnicos.add(tecnico);
     }
 
     public Tarea crearTarea(ServiciosDigitales servicio, Cliente cliente) {
         System.out.println("Creando nueva tarea para el servicio: " + servicio.obtenerInformacion());
 
-        Tecnico tecnico = buscarTecnicoDisponible();
+        Tecnico tecnico = SistemaVentas.getGestorPersonal().buscarTecnicoDisponible();
 
         if (tecnico == null) {
             System.out.println("No hay técnicos disponibles en este momento.");
@@ -37,17 +31,33 @@ public class ControlServicios {
 
         tareas.add(tarea);
 
-        System.out.println("Tarea creada con éxito" + "Id tarea: " + tarea.getIdTarea() + " y asignada a " + tecnico.getNombre());
+        System.out.println("Tarea creada con éxito - Id tarea: " + tarea.getIdTarea() + " y asignada a " + tecnico.getNombre());
         return tarea;
     }
 
-    public Tecnico buscarTecnicoDisponible() {
-        for (Tecnico tecnico : tecnicos) {
-            if (tecnico.estaDisponible()) {
-                return tecnico;
-            }
+    public void reasignarTecnico(Tarea tarea, Tecnico nuevoTecnico) {
+        if (!tarea.getEstado().puedeAsignarTecnico()) {
+            throw new IllegalStateException("No se puede reasignar técnico. La tarea está en estado: " + tarea.getEstado().getNombre());
         }
-        return null; //¿Aquí podría ir excepción?, preguntar
+
+        if (!nuevoTecnico.estaDisponible()) {
+            throw new IllegalStateException("El técnico no está disponible");
+        }
+
+        Tecnico tecnicoAnterior = tarea.getTecnicoAsignado();
+
+        if (tecnicoAnterior != null) {
+            tecnicoAnterior.completarServicio();
+        }
+
+        tarea.asignarTecnico(nuevoTecnico);
+        nuevoTecnico.asignarServicio(null);
+
+        System.out.println("Técnico reasignado: " + nuevoTecnico.getNombre());
+    }
+
+    public ArrayList<Tarea> getTareas() {
+        return tareas;
     }
 
 }

@@ -54,6 +54,17 @@ public class Tarea {
                 + " Estado: " + estado.getNombre());
     }
 
+    public void iniciarTarea() {
+        if (!estado.puedeIniciar()) {
+            throw new IllegalStateException(
+                    "No se puede iniciar la tarea en el estado actual: " + estado.getNombre()
+            );
+        }
+
+        this.estado = this.estado.transicionar("INICIAR");
+        System.out.println("Tarea " + idTarea + " iniciada - Estado: " + estado.getNombre());
+    }
+
     public void completar() {
         if (!estado.puedeCompletar()) {
             throw new IllegalStateException(
