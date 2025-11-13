@@ -242,6 +242,7 @@ public class MainConSesion extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuInventario = new javax.swing.JMenu();
         jMenuCategorias = new javax.swing.JMenu();
+        jMenuServicios = new javax.swing.JMenu();
 
         jMenu1.setText("File");
         jMenuBar2.add(jMenu1);
@@ -356,6 +357,14 @@ public class MainConSesion extends javax.swing.JFrame {
         });
         jMenuBar1.add(jMenuCategorias);
 
+        jMenuServicios.setText("Servicios Digitales");
+        jMenuServicios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuServiciosMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuServicios);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -427,6 +436,12 @@ public class MainConSesion extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuCategoriasMouseClicked
 
+    private void jMenuServiciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuServiciosMouseClicked
+        ServiciosDigitalesGUI servicios = new ServiciosDigitalesGUI();
+        servicios.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuServiciosMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -481,6 +496,7 @@ public class MainConSesion extends javax.swing.JFrame {
     private javax.swing.JMenu jMenuInventario;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenu jMenuServicios;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

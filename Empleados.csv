@@ -6,3 +6,6 @@ id,nombre,usuario,contrasena,activo,tipo
 5856,Juliana Gómez,jcajera,caja456,true,Cajero
 5857,Esteban López,ecajero,caja789,true,Cajero
 5858,Laura Castaño,lcajera,caja321,false,Cajero
+E008,Carlos Méndez,cmendez,tec123,true,Tecnico
+E009,Ana Torres,atorres,tec456,true,Tecnico
+E010,Roberto Silva,rsilva,tec789,true,Tecnico

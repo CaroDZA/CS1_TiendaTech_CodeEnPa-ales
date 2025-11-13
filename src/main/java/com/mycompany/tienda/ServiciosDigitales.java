@@ -14,8 +14,7 @@ public class ServiciosDigitales extends ProductoBase {
     private String descripcion;
     private boolean requiereTecnico;
 
-    public ServiciosDigitales(String nombre, double precio, String categoria,
-            int duracionEstimadaMinutos, String descripcion) {
+    public ServiciosDigitales(String nombre, double precio, String categoria, int duracionEstimadaMinutos, String descripcion) {
         super(nombre, precio, categoria);
 
         if (duracionEstimadaMinutos <= 0) {  //¿Podemos hacer conversión a minutos? 
