@@ -189,7 +189,7 @@ public class Clientes extends javax.swing.JFrame {
                     puntosACanjear
             );
 
-            clienteActual.restarPuntos(puntosACanjear);
+            clienteActual.setDescuentoPuntos(descuento);
 
             descuentoPuntosCanjeados = descuento;
 

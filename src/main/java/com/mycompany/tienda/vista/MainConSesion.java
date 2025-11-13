@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
  */
 public class MainConSesion extends javax.swing.JFrame {
 
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainConSesion.class.getName());
     private static CarritoDeCompras carritoGlobal;
     private javax.swing.JComboBox<String> comboFiltroCategoria;
@@ -42,7 +41,10 @@ public class MainConSesion extends javax.swing.JFrame {
         if (empleado instanceof Cajero) {
             cajero = (Cajero) empleado;
         } else if (empleado instanceof Supervisor) {
-            cajero = new Cajero("CajeroTemporal", "000", "temp", "temp123");
+            // Crear un cajero real con los datos del supervisor
+            Supervisor sup = (Supervisor) empleado;
+            cajero = new Cajero(sup.getId(), sup.getNombre(),
+                    sup.getUsuario(), sup.getContraseña());
         }
 
         carritoGlobal = new CarritoDeCompras(cajero, null);

@@ -5,7 +5,6 @@
 package com.mycompany.tienda;
 
 import com.mycompany.tienda.modelo.interfaces.Vendido;
-import com.mycompany.tienda.vista.Clientes;
 import java.util.ArrayList;
 
 /**
@@ -154,9 +153,14 @@ public class CarritoDeCompras {
             double subtotal = calcularSubtotal();
             descuentoFidelidad = subtotal * cliente.DescuentoFidelidad();
         }
-        double descuentoPuntos = Clientes.getDescuentoPuntosCanjeados();
 
-        return descuentoProductos + descuentoFidelidad + this.descuentoEspecial + descuentoPuntos;
+        double descuentoPuntos = 0;
+        if (cliente != null) {
+            descuentoPuntos = cliente.getDescuentoPuntos();
+        }
+
+        return descuentoProductos + descuentoFidelidad
+                + this.descuentoEspecial + descuentoPuntos;
     }
 
     public double calcularIVA() {

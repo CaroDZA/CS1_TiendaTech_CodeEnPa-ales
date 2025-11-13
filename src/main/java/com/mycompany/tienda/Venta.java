@@ -53,25 +53,23 @@ public class Venta {
 
     public void agregarItem(Vendido producto, int cantidad, ControlInventario inventario) {
         if (!estado.puedeAgregarProductos()) {
-            throw new IllegalStateException("No se pueden agregar items en el estado actual de la venta: " + estado.getNombre());
+            throw new IllegalStateException("No se pueden agregar items" + estado.getNombre());
         }
 
-        if (producto instanceof ProductoFisico) {
-            ProductoFisico pf = (ProductoFisico) producto;
-
-            if (!pf.hayStockDisponible(cantidad)) {
-                throw new IllegalArgumentException(
-                        "Stock insuficiente de " + pf.getNombre()
-                        + ". Disponible: " + pf.getStockEnTienda()
-                );
+        boolean encontrado = false;
+        for (ItemVenta item : items) {
+            if (item.getProducto().getNombre().equals(producto.getNombre())) {
+                item.setCantidad(item.getCantidad() + cantidad);
+                encontrado = true;
+                break;
             }
         }
-
-        ItemVenta item = new ItemVenta(producto, cantidad);
-        items.add(item);
-        System.out.println(item);
+        if (!encontrado) {
+            ItemVenta item = new ItemVenta(producto, cantidad);
+            items.add(item);
+        }
     }
-
+    
     public void eliminarItem(int indice) {
         if (indice < 0 || indice >= items.size()) {
             throw new IllegalArgumentException("Índice inválido");

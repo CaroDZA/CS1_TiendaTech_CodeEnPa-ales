@@ -45,8 +45,12 @@ public class Carrito extends javax.swing.JFrame {
     }
 
     private void inicializarCarrito() {
-
         carritoCompras = MainConSesion.getCarritoGlobal();
+
+        if (carritoCompras == null) {
+            System.out.println("Error: carrito no inicializado");
+            return;
+        }
 
         modeloTabla = new DefaultTableModel(
                 new Object[]{"Producto", "Cantidad", "Precio Unit.", "Subtotal"},
@@ -200,6 +204,8 @@ public class Carrito extends javax.swing.JFrame {
     }
 
     private void procesarPago() {
+        Clientes.resetearDescuentoPuntos();
+
         if (carritoCompras.estaVacio()) {
             JOptionPane.showMessageDialog(this,
                     "El carrito está vacío",
@@ -266,8 +272,6 @@ public class Carrito extends javax.swing.JFrame {
                 reducirStockInventario();
 
                 mostrarResumenVenta(venta);
-
-                Clientes.resetearDescuentoPuntos();
 
                 carritoCompras.vaciarCarrito();
                 cargarDatosCarrito();

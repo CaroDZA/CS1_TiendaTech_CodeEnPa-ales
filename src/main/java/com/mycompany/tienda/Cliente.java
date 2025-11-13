@@ -21,6 +21,7 @@ public class Cliente {
     private String direccion;
     private int puntosFidelidad;
     private int totalCompras;
+    private double descuentoPuntosActivo = 0.0;
 
     public Cliente(String nombre, String cedula, String telefono, String direccion) {
         Cliente.contadorClientes++;
@@ -93,6 +94,14 @@ public class Cliente {
 
     public String getDireccion() {
         return direccion;
+    }
+
+    public void setDescuentoPuntos(double descuento) {
+        this.descuentoPuntosActivo = descuento;
+    }
+
+    public double getDescuentoPuntos() {
+        return descuentoPuntosActivo;
     }
 
     public void setPuntosFidelidad(int puntos) {
