@@ -4,9 +4,14 @@
  */
 package com.mycompany.tienda.control;
 
+import com.mycompany.tienda.archivos.CargadorClientes;
+import com.mycompany.tienda.archivos.CargadorEmpleados;
+import com.mycompany.tienda.archivos.CargadorProductos;
+import com.mycompany.tienda.archivos.CargadorTareas;
 import com.mycompany.tienda.Cliente;
 import com.mycompany.tienda.Empleado;
 import com.mycompany.tienda.ProductoFisico;
+import com.mycompany.tienda.Tarea;
 import com.mycompany.tienda.Venta;
 import java.util.ArrayList;
 
@@ -20,6 +25,7 @@ public class SistemaVentas {
     private static ControlPersonal gestorPersonal;
     private static Empleado empleadoActual;
     private static ArrayList<Venta> historialVentas = new ArrayList<>();
+    private static ControlServicios gestorServicios;
 
     public static void inicializar() {
 
@@ -27,11 +33,20 @@ public class SistemaVentas {
             gestorClientes = new ControlClientes();
             inventario = new ControlInventario();
             gestorPersonal = new ControlPersonal();
+            gestorServicios = new ControlServicios();
 
             cargarDatosIniciales();
         } catch (Exception e) {
             System.err.println("Error al inicializar el sistema: " + e.getMessage());
         }
+    }
+
+    public static ControlServicios getGestorServicios() {
+        if (gestorServicios == null) {
+            System.err.println("Sistema no inicializado. Inicializando...");
+            inicializar();
+        }
+        return gestorServicios;
     }
 
     private static void cargarDatosIniciales() {
@@ -61,7 +76,6 @@ public class SistemaVentas {
             System.err.println(" Error al cargar clientes desde CSV: " + e.getMessage());
         }
 
-        // Agregar productos
         try {
             ArrayList<ProductoFisico> ProductosCSV = CargadorProductos.cargarDesdeCSV("Productos.csv");
 
@@ -73,6 +87,20 @@ public class SistemaVentas {
 
         } catch (Exception e) {
             System.err.println(" Error al cargar productos desde CSV: " + e.getMessage());
+        }
+
+        try {
+            ArrayList<Tarea> TareasCSV = CargadorTareas.cargarDesdeCSV(
+                    "Tareas.csv",
+                    gestorPersonal,
+                    gestorClientes
+            );
+
+            gestorServicios.cargarTareas(TareasCSV);
+            System.out.println("Tareas cargadas desde CSV: " + TareasCSV.size());
+
+        } catch (Exception e) {
+            System.err.println("Error al cargar tareas desde CSV: " + e.getMessage());
         }
     }
 

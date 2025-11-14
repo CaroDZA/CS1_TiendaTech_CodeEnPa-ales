@@ -1,0 +1,8 @@
+IdTarea,IdTecnico,NombreServicio,PrecioServicio,DuracionMinutos,CedulaCliente,Estado
+ORD-2,E009,Instalación de Windows,50000.0,120,SIN_CLIENTE,EN_ESPERA
+ORD-3,E012,Instalación Office,25000.0,45,SIN_CLIENTE,EN_ESPERA
+ORD-4,E014,Limpieza de Virus,40000.0,90,SIN_CLIENTE,EN_ESPERA
+ORD-5,E015,Configuración de Equipo,30000.0,60,SIN_CLIENTE,EN_ESPERA
+ORD-6,E010,Instalación Office,25000.0,45,SIN_CLIENTE,EN_ESPERA
+ORD-7,E011,Instalación de Windows,50000.0,120,SIN_CLIENTE,EN_ESPERA
+ORD-8,E008,Configuración de Equipo,30000.0,60,SIN_CLIENTE,COMPLETADA

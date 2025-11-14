@@ -6,7 +6,7 @@ package com.mycompany.tienda.vista;
 
 import com.mycompany.tienda.ProductoFisico;
 import com.mycompany.tienda.control.ControlInventario;
-import com.mycompany.tienda.control.GuardarProductos;
+import com.mycompany.tienda.archivos.GuardarProductos;
 import com.mycompany.tienda.control.SistemaVentas;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;

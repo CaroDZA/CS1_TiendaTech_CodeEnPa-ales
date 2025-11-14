@@ -12,7 +12,7 @@ import com.mycompany.tienda.Supervisor;
 import com.mycompany.tienda.Venta;
 import com.mycompany.tienda.control.ControlClientes;
 import com.mycompany.tienda.control.ControlPersonal;
-import com.mycompany.tienda.control.GuardarClientes;
+import com.mycompany.tienda.archivos.GuardarClientes;
 import com.mycompany.tienda.control.SistemaVentas;
 import com.mycompany.tienda.modelo.interfaces.MetodoPago;
 import com.mycompany.tienda.pagos.PagoTransferencia;

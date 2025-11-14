@@ -24,6 +24,7 @@ import java.util.ArrayList;
  *
  * @author carod
  */
+
 public class ServiciosDigitalesGUI extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName());
@@ -40,22 +41,27 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
     public ServiciosDigitalesGUI() {
         initComponents();
         modeloTablaTecnicos = new javax.swing.table.DefaultTableModel(
-                new Object[]{"Nombre", "Estado"}, // Columnas
-                0 // 0 filas inicialmente
-        );
+                new Object[]{"Técnico", "Estado"}, 0 //
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tablaTecnicos.setModel(modeloTablaTecnicos);
 
-        controlServicios = new ControlServicios();
+        controlServicios = SistemaVentas.getGestorServicios();
         verificarInicializarCarrito();
         cargarServiciosDisponibles();
         actualizarTecnicosDisponibles();
         configurarEventos();
         crearPanelAutenticacionTecnico();
+        configurarVisibilidadBotones();
     }
 
     private void verificarInicializarCarrito() {
         if (MainConSesion.getCarritoGlobal() == null) {
-            System.out.println("⚠️ Carrito global no inicializado. Inicializando...");
+            System.out.println("Carrito global no inicializado. Inicializando...");
 
             // Obtener el empleado actual
             Empleado empleado = SistemaVentas.getEmpleadoActual();
@@ -150,41 +156,19 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
     }
 
     private void cerrarSesionTecnico() {
-        String[] opciones = {
-            "Ir al Menú Principal",
-            "Cambiar de Usuario",
-            "Cancelar"
-        };
-
-        int seleccion = JOptionPane.showOptionDialog(this,
-                "¿Qué desea hacer?\n\n"
+        int opcion = JOptionPane.showConfirmDialog(this,
+                "¿Desea cerrar sesión?\n\n"
                 + "Sesión actual: " + SistemaVentas.getEmpleadoActual().getNombre(),
-                "Opciones de Sesión",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opciones,
-                opciones[0]);
+                "Cerrar Sesión",
+                JOptionPane.YES_NO_OPTION);
 
-        switch (seleccion) {
-            case 0: 
-                SistemaVentas.getGestorPersonal().cerrarSesion();
-                MainConSesion main = new MainConSesion();
-                main.setVisible(true);
-                this.dispose();
-                break;
+        if (opcion == JOptionPane.YES_OPTION) {
+            SistemaVentas.getGestorPersonal().cerrarSesion();
 
-            case 1: 
-                SistemaVentas.getGestorPersonal().cerrarSesion();
-                IniciarSesionT loginTec = new IniciarSesionT();
-                loginTec.setVisible(true);
-                this.dispose();
-                break;
-
-            case 2: 
-            default:
-               
-                break;
+            // IR A MAIN (sin sesión)
+            Main main = new Main();
+            main.setVisible(true);
+            this.dispose();
         }
     }
 
@@ -277,92 +261,102 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
         panelInfo.add(lblDescripcion);
         panelInfo.add(lblTecnico);
 
-        javax.swing.JButton btnAgregar = new javax.swing.JButton("Agregar al Carrito");
-        btnAgregar.setBackground(new Color(0, 153, 76));
-        btnAgregar.setForeground(Color.WHITE);
-        btnAgregar.setFont(new java.awt.Font("Microsoft Tai Le", 1, 12));
-        btnAgregar.addActionListener(e -> agregarServicioAlCarrito(servicio));
-
         card.add(panelInfo, BorderLayout.CENTER);
-        card.add(btnAgregar, BorderLayout.SOUTH);
+
+        Empleado empleadoActual = SistemaVentas.getEmpleadoActual();
+
+        if (!(empleadoActual instanceof Tecnico)) {
+            javax.swing.JButton btnAgregar = new javax.swing.JButton("Agregar al Carrito");
+            btnAgregar.setBackground(new Color(0, 153, 76));
+            btnAgregar.setForeground(Color.WHITE);
+            btnAgregar.setFont(new java.awt.Font("Microsoft Tai Le", 1, 12));
+            btnAgregar.addActionListener(e -> agregarServicioAlCarrito(servicio));
+
+            card.add(btnAgregar, BorderLayout.SOUTH);
+        } else {
+            javax.swing.JLabel lblInfo = new javax.swing.JLabel("Los técnicos no pueden agregar servicios");
+            lblInfo.setFont(new java.awt.Font("Segoe UI", 2, 11));
+            lblInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            lblInfo.setForeground(new Color(150, 150, 150));
+            lblInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+            card.add(lblInfo, BorderLayout.SOUTH);
+        }
 
         return card;
     }
 
     private void agregarServicioAlCarrito(ServiciosDigitales servicio) {
-        String input = JOptionPane.showInputDialog(this,
-                "¿Cuántos servicios desea agregar?",
-                "Cantidad",
-                JOptionPane.QUESTION_MESSAGE);
+        ArrayList<Tecnico> tecnicosDisponibles = SistemaVentas.getGestorPersonal().obtenerTecnicosDisponibles();
 
-        if (input == null || input.trim().isEmpty()) {
+        if (tecnicosDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No hay técnicos disponibles en este momento.\n"
+                    + "No se puede agregar el servicio al carrito.",
+                    "Sin Técnicos Disponibles",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        try {
-            int cantidad = Integer.parseInt(input);
+        Tarea nuevaTarea = controlServicios.crearTarea(servicio, null);
 
-            if (cantidad <= 0) {
-                JOptionPane.showMessageDialog(this,
-                        "La cantidad debe ser mayor a 0",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            for (int i = 0; i < cantidad; i++) {
-                Tarea nuevaTarea = controlServicios.crearTarea(servicio, null);
-
-                if (nuevaTarea == null) {
-                    JOptionPane.showMessageDialog(this,
-                            "No hay técnicos disponibles para asignar",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-
-            // Agregar al carrito (ya está garantizado que existe)
-            MainConSesion.getCarritoGlobal().agregarItem(servicio, cantidad);
-            actualizarTecnicosDisponibles();
-
+        if (nuevaTarea == null) {
             JOptionPane.showMessageDialog(this,
-                    "Servicio agregado al carrito\n\n"
-                    + "Servicio: " + servicio.getNombre() + "\n"
-                    + "Cantidad: " + cantidad + "\n"
-                    + "Técnicos asignados automáticamente",
-                    "Éxito",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Ingrese un número válido",
+                    "Error al crear la tarea. No hay técnicos disponibles.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        controlServicios.guardarTareas();
+
+        MainConSesion.getCarritoGlobal().agregarItem(servicio, 1);
+
+        actualizarTecnicosDisponibles();
+
+        JOptionPane.showMessageDialog(this,
+                "Servicio agregado al carrito\n\n"
+                + "Servicio: " + servicio.getNombre() + "\n"
+                + "Precio: $" + String.format("%.2f", servicio.getPrecio()) + "\n"
+                + "Técnico asignado: " + nuevaTarea.getTecnicoAsignado().getNombre() + "\n"
+                + "ID Tarea: " + nuevaTarea.getIdTarea(),
+                "Servicio Agregado",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void actualizarTecnicosDisponibles() {
         modeloTablaTecnicos.setRowCount(0);
 
-        // Obtener técnicos
-        ArrayList<Tecnico> tecnicos = SistemaVentas.getGestorPersonal().obtenerTecnicosDisponibles();
+        ArrayList<Tecnico> todosTecnicos = new ArrayList<>();
 
-        // Llenar tabla
-        for (int i = 0; i < tecnicos.size(); i++) {
-            Tecnico tecnico = tecnicos.get(i);
-            modeloTablaTecnicos.addRow(new Object[]{
-                tecnico.getNombre(),
-                "Disponible"
-            });
+        for (Object emp : SistemaVentas.getGestorPersonal().getEmpleados().values()) {
+            if (emp instanceof Tecnico && ((Tecnico) emp).esActivo()) {
+                todosTecnicos.add((Tecnico) emp);
+            }
         }
 
-        // Actualizar label
-        if (tecnicos.isEmpty()) {
+        int disponibles = 0;
+
+        for (Tecnico tecnico : todosTecnicos) {
+            String estado = tecnico.estaDisponible() ? "Disponible" : "Ocupado";
+
+            modeloTablaTecnicos.addRow(new Object[]{
+                tecnico.getNombre(),
+                estado
+            });
+
+            if (tecnico.estaDisponible()) {
+                disponibles++;
+            }
+
+            System.out.println("Técnico: " + tecnico.getNombre() + " -> " + estado);
+        }
+
+        if (disponibles == 0) {
             lblTecnicosDisponibles.setText("Sin Técnicos Disponibles");
             lblTecnicosDisponibles.setForeground(Color.RED);
         } else {
-            lblTecnicosDisponibles.setText(" Técnicos Disponibles: " + tecnicos.size());
+            lblTecnicosDisponibles.setText("Técnicos Disponibles: " + disponibles + "/" + todosTecnicos.size());
             lblTecnicosDisponibles.setForeground(new Color(0, 153, 0));
         }
     }
@@ -528,21 +522,32 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
                     JOptionPane.YES_NO_CANCEL_OPTION);
 
             if (opcion == JOptionPane.CANCEL_OPTION) {
-                return; // No salir
+                return;
             }
 
             if (opcion == JOptionPane.YES_OPTION) {
                 SistemaVentas.getGestorPersonal().cerrarSesion();
+                Main main = new Main();
+                main.setVisible(true);
+                this.dispose();
+                return;
             }
         }
 
-        Main main = new Main();
+        MainConSesion main = new MainConSesion();
         main.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnVerTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerTareasActionPerformed
-        // TODO add your handling code here:
+        if (!(SistemaVentas.getEmpleadoActual() instanceof Supervisor)) {
+            JOptionPane.showMessageDialog(this,
+                    "Solo supervisores pueden ver todas las tareas asignadas",
+                    "Acceso Denegado",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         ArrayList<Tarea> tareas = controlServicios.getTareas();
 
         if (tareas.isEmpty()) {
@@ -552,33 +557,51 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
         StringBuilder listaTareas = new StringBuilder();
         listaTareas.append("TAREAS ASIGNADAS:\n\n");
 
         for (int i = 0; i < tareas.size(); i++) {
             Tarea tarea = tareas.get(i);
             listaTareas.append((i + 1)).append(". ")
-                    .append("ID: ").append(tarea.getIdTarea())
-                    .append(" | Técnico: ").append(tarea.getTecnicoAsignado().getNombre())
-                    .append(" | Estado: ").append(tarea.getEstado().getNombre())
+                    .append("ID: ").append(tarea.getIdTarea());
+
+            if (tarea.getTecnicoAsignado() != null) {
+                listaTareas.append(" | Técnico: ").append(tarea.getTecnicoAsignado().getNombre());
+            } else {
+                listaTareas.append(" | Técnico: SIN ASIGNAR");
+            }
+
+            listaTareas.append(" | Estado: ").append(tarea.getEstado().getNombre())
                     .append("\n");
         }
 
-        int opcion = JOptionPane.showConfirmDialog(this,
-                listaTareas.toString() + "\n¿Desea cambiar la asignación de algún técnico?",
+        JOptionPane.showMessageDialog(this,
+                listaTareas.toString(),
                 "Tareas Asignadas",
-                JOptionPane.YES_NO_OPTION);
-
-        if (opcion == JOptionPane.YES_OPTION) {
-            cambiarAsignacionTecnico(tareas);
-        }
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void cambiarAsignacionTecnico(ArrayList<Tarea> tareas) {
-        String[] opcionesTareas = new String[tareas.size()];
+        ArrayList<Tarea> tareasConTecnico = new ArrayList<>();
+        for (Tarea t : tareas) {
+            if (t.getTecnicoAsignado() != null) {
+                tareasConTecnico.add(t);
+            }
+        }
 
-        for (int i = 0; i < tareas.size(); i++) {
-            Tarea t = tareas.get(i);
+        if (tareasConTecnico.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No hay tareas con técnicos asignados para reasignar",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String[] opcionesTareas = new String[tareasConTecnico.size()];
+
+        for (int i = 0; i < tareasConTecnico.size(); i++) {
+            Tarea t = tareasConTecnico.get(i);
             opcionesTareas[i] = t.getIdTarea() + " - " + t.getTecnicoAsignado().getNombre();
         }
 
@@ -602,7 +625,7 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
             }
         }
 
-        Tarea tareaSeleccionada = tareas.get(indiceTarea);
+        Tarea tareaSeleccionada = tareasConTecnico.get(indiceTarea);
 
         ArrayList<Tecnico> tecnicosDisponibles = SistemaVentas.getGestorPersonal().obtenerTecnicosDisponibles();
 
@@ -643,6 +666,8 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
             controlServicios.reasignarTecnico(tareaSeleccionada, nuevoTecnico);
             actualizarTecnicosDisponibles();
 
+            controlServicios.guardarTareas();
+
             JOptionPane.showMessageDialog(this,
                     "Técnico reasignado exitosamente",
                     "Éxito",
@@ -657,6 +682,14 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
 
     private void bntAsignacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAsignacionActionPerformed
         // TODO add your handling code here:
+        if (!(SistemaVentas.getEmpleadoActual() instanceof Supervisor)) {
+            JOptionPane.showMessageDialog(this,
+                    "Solo supervisores pueden cambiar asignaciones",
+                    "Acceso Denegado",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         ArrayList<Tarea> tareas = controlServicios.getTareas();
 
         if (tareas.isEmpty()) {
@@ -671,182 +704,220 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_bntAsignacionActionPerformed
 
     private void btnVerestadodetareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerestadodetareasActionPerformed
-        // TODO add your handling code here:
-        if (!verificarAutenticacionTecnico()) {
-            return;
-        }
+    // TODO add your handling code here:
+    if (!(SistemaVentas.getEmpleadoActual() instanceof Tecnico)) {
+        JOptionPane.showMessageDialog(this,
+                "Solo técnicos pueden gestionar estados de tareas",
+                "Acceso Denegado",
+                JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        Tecnico tecnicoActual = (Tecnico) SistemaVentas.getEmpleadoActual();
-        ArrayList<Tarea> tareas = controlServicios.getTareas();
+    Tecnico tecnicoActual = (Tecnico) SistemaVentas.getEmpleadoActual();
+    ArrayList<Tarea> tareas = controlServicios.getTareas();
 
-        if (tareas.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "No hay tareas registradas",
-                    "Información",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
+    if (tareas.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "No hay tareas registradas en el sistema",
+                "Información",
+                JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
 
-        // Filtrar solo las tareas del técnico actual
-        ArrayList<Tarea> tareasTecnico = new ArrayList<>();
-        for (Tarea t : tareas) {
-            if (t.getTecnicoAsignado().getId().equals(tecnicoActual.getId())) {
-                tareasTecnico.add(t);
-            }
-        }
-
-        if (tareasTecnico.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "No tienes tareas asignadas",
-                    "Información",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        // Mostrar tareas
-        StringBuilder listaTareas = new StringBuilder();
-        listaTareas.append("TUS TAREAS:\n\n");
-
-        for (int i = 0; i < tareasTecnico.size(); i++) {
-            Tarea tarea = tareasTecnico.get(i);
-            listaTareas.append((i + 1)).append(". ")
-                    .append("ID: ").append(tarea.getIdTarea())
-                    .append(" | Estado: ").append(tarea.getEstado().getNombre())
-                    .append("\n");
-        }
-
-        int opcion = JOptionPane.showConfirmDialog(this,
-                listaTareas.toString() + "\n¿Desea cambiar el estado de alguna tarea?",
-                "Mis Tareas - " + tecnicoActual.getNombre(),
-                JOptionPane.YES_NO_OPTION);
-
-        if (opcion == JOptionPane.YES_OPTION) {
-            cambiarEstadoTarea(tareasTecnico);
+    // Filtrar SOLO tareas del técnico actual
+    ArrayList<Tarea> tareasTecnico = new ArrayList<>();
+    for (Tarea t : tareas) {
+        if (t.getTecnicoAsignado().getId().equals(tecnicoActual.getId())) {
+            tareasTecnico.add(t);
         }
     }
 
+    if (tareasTecnico.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "No tienes tareas asignadas",
+                "Sin Tareas",
+                JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    // Mostrar tareas del técnico
+    StringBuilder listaTareas = new StringBuilder();
+    listaTareas.append("TUS TAREAS:\n\n");
+
+    for (int i = 0; i < tareasTecnico.size(); i++) {
+        Tarea tarea = tareasTecnico.get(i);
+        listaTareas.append((i + 1)).append(". ")
+                .append("ID: ").append(tarea.getIdTarea())
+                .append(" | Estado: ").append(tarea.getEstado().getNombre())
+                .append("\n");
+    }
+
+    int opcion = JOptionPane.showConfirmDialog(this,
+            listaTareas.toString() + "\n¿Desea cambiar el estado de alguna tarea?",
+            "Mis Tareas - " + tecnicoActual.getNombre(),
+            JOptionPane.YES_NO_OPTION);
+
+    if (opcion == JOptionPane.YES_OPTION) {
+        cambiarEstadoTarea(tareasTecnico);
+    }
+}
+
+    private void configurarVisibilidadBotones() {
+    Empleado empleado = SistemaVentas.getEmpleadoActual();
+
+    if (empleado instanceof Cajero) {
+        btnVerTareas.setVisible(false);
+        bntAsignacion.setVisible(false);
+        btnVerestadodetareas.setVisible(false);
+
+    } else if (empleado instanceof Tecnico) {
+        btnVerTareas.setVisible(false);
+        bntAsignacion.setVisible(false);
+        btnVerestadodetareas.setVisible(true);
+
+    } else if (empleado instanceof Supervisor) {
+        btnVerTareas.setVisible(true);
+        bntAsignacion.setVisible(true);
+        btnVerestadodetareas.setVisible(false);
+
+    } else {
+        btnVerTareas.setVisible(false);
+        bntAsignacion.setVisible(false);
+        btnVerestadodetareas.setVisible(false);
+    }
+}
+
     private void cambiarEstadoTarea(ArrayList<Tarea> tareas) {
-        String[] opcionesTareas = new String[tareas.size()];
+    String[] opcionesTareas = new String[tareas.size()];
 
-        for (int i = 0; i < tareas.size(); i++) {
-            Tarea t = tareas.get(i);
-            opcionesTareas[i] = t.getIdTarea() + " - " + t.getEstado().getNombre();
+    for (int i = 0; i < tareas.size(); i++) {
+        Tarea t = tareas.get(i);
+        opcionesTareas[i] = t.getIdTarea() + " - " + t.getEstado().getNombre();
+    }
+
+    String seleccionTarea = (String) JOptionPane.showInputDialog(this,
+            "Seleccione la tarea:",
+            "Cambiar Estado",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            opcionesTareas,
+            opcionesTareas[0]);
+
+    if (seleccionTarea == null) {
+        return;
+    }
+
+    int indiceTarea = -1;
+    for (int i = 0; i < opcionesTareas.length; i++) {
+        if (opcionesTareas[i].equals(seleccionTarea)) {
+            indiceTarea = i;
+            break;
         }
+    }
 
-        String seleccionTarea = (String) JOptionPane.showInputDialog(this,
-                "Seleccione la tarea:",
-                "Cambiar Estado",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opcionesTareas,
-                opcionesTareas[0]);
+    Tarea tareaSeleccionada = tareas.get(indiceTarea);
+    String estadoActual = tareaSeleccionada.getEstado().getNombre();
 
-        if (seleccionTarea == null) {
-            return;
-        }
+    ArrayList<String> opcionesEstado = new ArrayList<>();
 
-        int indiceTarea = -1;
-        for (int i = 0; i < opcionesTareas.length; i++) {
-            if (opcionesTareas[i].equals(seleccionTarea)) {
-                indiceTarea = i;
-                break;
+    if (tareaSeleccionada.getEstado().puedeIniciar()) {
+        opcionesEstado.add("INICIAR");
+    }
+    if (tareaSeleccionada.getEstado().puedeCompletar()) {
+        opcionesEstado.add("COMPLETAR");
+    }
+    if (tareaSeleccionada.getEstado().puedeCancelar()) {
+        opcionesEstado.add("CANCELAR");
+    }
+
+    if (opcionesEstado.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "Esta tarea no puede cambiar de estado",
+                "Información",
+                JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    String[] arrayOpciones = opcionesEstado.toArray(new String[0]);
+
+    String accion = (String) JOptionPane.showInputDialog(this,
+            "Estado actual: " + estadoActual + "\nSeleccione la acción:",
+            "Cambiar Estado",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            arrayOpciones,
+            arrayOpciones[0]);
+
+    if (accion == null) {
+        return;
+    }
+
+    try {
+        if (accion.equals("INICIAR")) {
+            tareaSeleccionada.iniciarTarea();
+        } else if (accion.equals("COMPLETAR")) {
+            tareaSeleccionada.completar(); // 
+        } else if (accion.equals("CANCELAR")) {
+            tareaSeleccionada.setEstado(EstadoTarea.CANCELADA);
+
+            Tecnico tec = tareaSeleccionada.getTecnicoAsignado();
+            if (tec != null) {
+                tec.completarServicio();
             }
         }
 
-        Tarea tareaSeleccionada = tareas.get(indiceTarea);
-        String estadoActual = tareaSeleccionada.getEstado().getNombre();
+        controlServicios.guardarTareas();
 
-        ArrayList<String> opcionesEstado = new ArrayList<>();
+        actualizarTecnicosDisponibles();
 
-        if (tareaSeleccionada.getEstado().puedeIniciar()) {
-            opcionesEstado.add("INICIAR");
-        }
-        if (tareaSeleccionada.getEstado().puedeCompletar()) {
-            opcionesEstado.add("COMPLETAR");
-        }
-        if (tareaSeleccionada.getEstado().puedeCancelar()) {
-            opcionesEstado.add("CANCELAR");
-        }
+        JOptionPane.showMessageDialog(this,
+                "Estado cambiado exitosamente a: " + tareaSeleccionada.getEstado().getNombre(),
+                "Éxito",
+                JOptionPane.INFORMATION_MESSAGE);
 
-        if (opcionesEstado.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Esta tarea no puede cambiar de estado",
-                    "Información",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        String[] arrayOpciones = opcionesEstado.toArray(new String[0]);
-
-        String accion = (String) JOptionPane.showInputDialog(this,
-                "Estado actual: " + estadoActual + "\nSeleccione la acción:",
-                "Cambiar Estado",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                arrayOpciones,
-                arrayOpciones[0]);
-
-        if (accion == null) {
-            return;
-        }
-
-        try {
-            if (accion.equals("INICIAR")) {
-                tareaSeleccionada.iniciarTarea();
-            } else if (accion.equals("COMPLETAR")) {
-                tareaSeleccionada.completar();
-            } else if (accion.equals("CANCELAR")) {
-                tareaSeleccionada.setEstado(EstadoTarea.CANCELADA);
-            }
-
-            JOptionPane.showMessageDialog(this,
-                    "Estado cambiado exitosamente a: " + tareaSeleccionada.getEstado().getNombre(),
-                    "Éxito",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error: " + e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+                "Error: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnVerestadodetareasActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /* Set the Nimbus look and feel */
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+     */
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ServiciosDigitalesGUI().setVisible(true);
-            }
-        });
-
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(ServiciosDigitales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    //</editor-fold>
+
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new ServiciosDigitalesGUI().setVisible(true);
+        }
+    });
+
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bntAsignacion;

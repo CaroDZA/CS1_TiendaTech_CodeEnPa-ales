@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class ControlPersonal {
 
-    private HashMap<String, Empleado> empleados; // key = usuario
+    private HashMap<String, Empleado> empleados; // key = ID
     private Empleado empleadoActual;
 
     public ControlPersonal() {
@@ -23,50 +23,46 @@ public class ControlPersonal {
         this.empleadoActual = null;
     }
 
-    // Agregar empleado
     public void agregarEmpleado(Empleado empleado) {
-        if (empleados.containsKey(empleado.getUsuario())) {
-            throw new IllegalArgumentException("Ya existe un empleado con ese usuario");
+        if (empleados.containsKey(empleado.getId())) {
+            throw new IllegalArgumentException("Ya existe un empleado con ese ID");
         }
-
-        empleados.put(empleado.getUsuario(), empleado);
+        empleados.put(empleado.getId(), empleado);
         System.out.println("Empleado agregado: " + empleado.getNombre());
     }
 
     public void agregarEmpleadoSilencioso(Empleado empleado) {
-        if (empleados.containsKey(empleado.getUsuario())) {
-            throw new IllegalArgumentException("Ya existe un empleado con ese usuario");
+        if (empleados.containsKey(empleado.getId())) {
+            throw new IllegalArgumentException("Ya existe un empleado con ese ID");
         }
-
-        empleados.put(empleado.getUsuario(), empleado);
+        empleados.put(empleado.getId(), empleado);
     }
 
-    // Iniciar sesión
     public Empleado iniciarSesion(String usuario, String contrasena) {
-        Empleado empleado = empleados.get(usuario);
-
+        Empleado empleado = null;
+        for (Empleado e : empleados.values()) {
+            if (e.getUsuario().equals(usuario)) {
+                empleado = e;
+                break;
+            }
+        }
         if (empleado == null) {
             System.out.println("Usuario no encontrado");
             return null;
         }
-
         if (!empleado.getContraseña().equals(contrasena)) {
             System.out.println("Contraseña incorrecta");
             return null;
         }
-
         if (!empleado.esActivo()) {
             System.out.println("Empleado inactivo");
             return null;
         }
-
         this.empleadoActual = empleado;
         System.out.println("Sesion iniciada: " + empleado.getNombre() + " (" + empleado.getClass().getSimpleName() + ")");
-
         return empleado;
     }
 
-    // Cerrar sesión
     public void cerrarSesion() {
         if (empleadoActual != null) {
             System.out.println("Sesion cerrada: " + empleadoActual.getNombre());
@@ -78,7 +74,10 @@ public class ControlPersonal {
         return empleadoActual;
     }
 
-    // Buscar técnico disponible
+    public HashMap<String, Empleado> getEmpleados() {
+        return empleados;
+    }
+
     public Tecnico buscarTecnicoDisponible() {
         for (Empleado empleado : empleados.values()) {
             if (empleado instanceof Tecnico && empleado.esActivo()) {
@@ -93,7 +92,6 @@ public class ControlPersonal {
 
     public ArrayList<Tecnico> obtenerTecnicosDisponibles() {
         ArrayList<Tecnico> tecnicos = new ArrayList<>();
-
         for (Empleado empleado : empleados.values()) {
             if (empleado instanceof Tecnico && empleado.esActivo()) {
                 Tecnico tecnico = (Tecnico) empleado;
@@ -102,8 +100,6 @@ public class ControlPersonal {
                 }
             }
         }
-
         return tecnicos;
     }
-
 }

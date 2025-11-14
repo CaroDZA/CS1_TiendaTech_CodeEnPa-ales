@@ -22,67 +22,68 @@ public class Tarea {
     private EstadoTarea estado;
 
     public Tarea(String idTarea, ServiciosDigitales servicio, Cliente cliente, LocalDateTime fechaHora) {
-
-        this.idTarea = "ORD-" + contador;
-        contador++;
+        this.idTarea = "ORD-" + contador++;
         this.servicio = servicio;
-        this.tecnicoAsignado = tecnicoAsignado;
+        this.tecnicoAsignado = null;
         this.cliente = cliente;
         this.fechaHora = LocalDateTime.now();
         this.estado = EstadoTarea.PENDIENTE;
     }
 
+    public Tarea(String idTareaExistente, ServiciosDigitales servicio, Cliente cliente, LocalDateTime fechaHora, boolean desdeCSV) {
+        this.idTarea = idTareaExistente;
+        this.servicio = servicio;
+        this.tecnicoAsignado = null;
+        this.cliente = cliente;
+        this.fechaHora = fechaHora;
+        this.estado = EstadoTarea.PENDIENTE;
+
+        if (desdeCSV) {
+            actualizarContador(idTareaExistente);
+        }
+    }
+
+    private static void actualizarContador(String idTarea) {
+        try {
+            int numero = Integer.parseInt(idTarea.replace("ORD-", "").trim());
+            if (numero >= contador) {
+                contador = numero + 1;
+            }
+        } catch (Exception e) {
+            System.err.println("Error al actualizar contador: " + e.getMessage());
+        }
+    }
+
     public void asignarTecnico(Tecnico tecnico) {
         if (!estado.puedeAsignarTecnico()) {
-            throw new IllegalStateException(
-                    "No se puede asignar técnico en el estado actual: " + estado.getNombre()
-            );
+            throw new IllegalStateException("No se puede asignar técnico en estado: " + estado.getNombre());
         }
-
-        if (!tecnico.estaDisponible()) {
-            throw new IllegalStateException(
-                    "El tecnico " + tecnico.getNombre() + " no esta disponible"
-            );
-        }
-
         this.tecnicoAsignado = tecnico;
-
         this.estado = this.estado.transicionar("ASIGNAR_TECNICO");
-
-        System.out.println(" Tecnico " + tecnico.getNombre()
-                + " asignado a la tarea " + idTarea
-                + " Estado: " + estado.getNombre());
+        tecnico.agregarTarea(this);
+        System.out.println("Tecnico " + tecnico.getNombre() + " asignado a tarea " + idTarea);
     }
 
     public void iniciarTarea() {
         if (!estado.puedeIniciar()) {
-            throw new IllegalStateException(
-                    "No se puede iniciar la tarea en el estado actual: " + estado.getNombre()
-            );
+            throw new IllegalStateException("No se puede iniciar tarea en estado: " + estado.getNombre());
         }
-
         this.estado = this.estado.transicionar("INICIAR");
-        System.out.println("Tarea " + idTarea + " iniciada - Estado: " + estado.getNombre());
+        System.out.println("Tarea " + idTarea + " iniciada");
     }
 
     public void completar() {
         if (!estado.puedeCompletar()) {
-            throw new IllegalStateException(
-                    "No se puede completar la tarea en el estado actual: " + estado.getNombre()
-            );
+            throw new IllegalStateException("No se puede completar tarea en estado: " + estado.getNombre());
         }
-
-        this.estado = this.estado.transicionar("COMPLETAR");
-
         if (tecnicoAsignado != null) {
             tecnicoAsignado.completarServicio();
         }
-
-        System.out.println(" Tarea " + idTarea + " completada  Estado: " + estado.getNombre());
+        this.estado = this.estado.transicionar("COMPLETAR");
+        System.out.println("Tarea " + idTarea + " completada");
     }
 
-    // Getters
-    public String getIdOrden() {
+    public String getIdTarea() {
         return idTarea;
     }
 
@@ -94,11 +95,25 @@ public class Tarea {
         return estado;
     }
 
-    public String getIdTarea() {
-        return idTarea;
+    public ServiciosDigitales getServicio() {
+        return servicio;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
     }
 
     public void setEstado(EstadoTarea estado) {
         this.estado = estado;
+        if ((estado == EstadoTarea.CANCELADA || estado == EstadoTarea.COMPLETADA) && tecnicoAsignado != null) {
+            tecnicoAsignado.completarServicio();
+        }
+    }
+
+    public void setTecnicoAsignado(Tecnico tecnico) {
+        this.tecnicoAsignado = tecnico;
+        if (tecnico != null) {
+            tecnico.agregarTarea(this);
+        }
     }
 }

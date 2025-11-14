@@ -1,7 +1,7 @@
 id,nombre,usuario,contrasena,activo,tipo
 7854,Juan Ochoa,jsupervisor,super123,true,Supervisor
 7855,Lina Ramírez,lsupervisor,super456,true,Supervisor
-5854,Maria Camila Piedrahita,mcajera,cajera123,true,Cajero
+5854,Maria Camila Piedrahida,mcajera,cajera123,true,Cajero
 5855,Pedro Infante,pcajero,cajero123,false,Cajero
 5856,Juliana Gómez,jcajera,caja456,true,Cajero
 5857,Esteban López,ecajero,caja789,true,Cajero
@@ -9,3 +9,8 @@ id,nombre,usuario,contrasena,activo,tipo
 E008,Carlos Méndez,cmendez,tec123,true,Tecnico
 E009,Ana Torres,atorres,tec456,true,Tecnico
 E010,Roberto Silva,rsilva,tec789,true,Tecnico
+E011,Santiago Herrera,sherrera,tec951,true,Tecnico
+E012,Valentina Ríos,vrios,tec753,true,Tecnico
+E013,Andrés Carvajal,acarvajal,tec852,false,Tecnico
+E014,Daniela Montoya,dmontoya,tec147,true,Tecnico
+E015,Mateo Arango,marango,tec369,true,Tecnico

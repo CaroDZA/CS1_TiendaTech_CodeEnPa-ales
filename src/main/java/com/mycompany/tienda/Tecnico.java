@@ -15,6 +15,7 @@ public class Tecnico extends Empleado {
     private boolean disponible;
     private ServiciosDigitales servicioActual;
     private ArrayList<String> especialidades;
+    private ArrayList<Tarea> tareasAsignadas = new ArrayList<>();
 
     public Tecnico(String id, String nombre, String usuario, String contraseña) {
         super(id, nombre, usuario, contraseña);
@@ -36,7 +37,7 @@ public class Tecnico extends Empleado {
         }
         this.disponible = false;
         this.servicioActual = servicio;
-        System.out.println("Servicio asignado a técnico: " + nombre);
+        System.out.println("Servicio asignado a técnico: " + nombre + " AHORA OCUPADO");
     }
 
     public void completarServicio() {
@@ -48,6 +49,12 @@ public class Tecnico extends Empleado {
         this.servicioActual = null;
     }
 
+    public void liberarServicio() {
+        this.disponible = true;
+        this.servicioActual = null;
+        System.out.println("Técnico " + nombre + " liberado manualmente");
+    }
+
     // Getters
     public boolean estaDisponible() {
         return disponible;
@@ -55,6 +62,14 @@ public class Tecnico extends Empleado {
 
     public ServiciosDigitales getServicioActual() {
         return servicioActual;
+    }
+
+    public ArrayList<Tarea> getTareasAsignadas() {
+        return tareasAsignadas;
+    }
+
+    public void agregarTarea(Tarea tarea) {
+        tareasAsignadas.add(tarea);
     }
 
     @Override
