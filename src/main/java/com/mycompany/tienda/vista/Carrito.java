@@ -279,6 +279,18 @@ public class Carrito extends javax.swing.JFrame {
         }
 
         Cliente clienteSeleccionado = seleccionarCliente();
+        
+        if (clienteSeleccionado != null) {
+        double descuentoPuntos = Clientes.getDescuentoPuntosCanjeados();
+        if (descuentoPuntos > 0) {
+            carritoCompras.aplicarDescuentoPorPuntos(descuentoPuntos);
+            JOptionPane.showMessageDialog(this,
+                    "Descuento por puntos aplicado: $" + String.format("%.2f", descuentoPuntos),
+                    "Descuento Aplicado",
+                    JOptionPane.INFORMATION_MESSAGE);
+            actualizarTotales();
+        }
+    }
 
         MetodoPago metodoPago = seleccionarMetodoPago();
         if (metodoPago == null) {
@@ -325,15 +337,25 @@ public class Carrito extends javax.swing.JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirmarEntrega == JOptionPane.YES_OPTION) {
+                    // Marcar como entregada (acumula puntos al cliente)
                     venta.marcarComoEntregada();
+
+                    // Registrar venta en el sistema (para reportes)
+                    SistemaVentas.registrarVenta(venta);
+
+                    // Guardar clientes actualizados en CSV
                     GuardarClientes.guardarEnCSV(
                             SistemaVentas.getGestorClientes().getClientes(),
                             "Clientes.csv"
                     );
+
                     JOptionPane.showMessageDialog(this,
                             "Productos entregados\nCliente obtuvo sus puntos",
                             "Completado",
                             JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // Registrar venta sin entregar (también va a reportes)
+                    SistemaVentas.registrarVenta(venta);
                 }
             }
         } catch (Exception e) {

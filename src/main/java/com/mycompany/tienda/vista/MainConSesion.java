@@ -61,9 +61,8 @@ public class MainConSesion extends javax.swing.JFrame {
 
     private void inicializarFiltroCategoria() {
         comboFiltroCategoria = new javax.swing.JComboBox<>();
-        comboFiltroCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(
-                new String[]{"TODAS", "COMPUTADORAS", "SMARTPHONES", "ACCESORIOS", "PERIFÉRICOS", "COMPONENTES", "SERVICIOS TÉCNICOS"}
-        ));
+        cargarCategoriasEnCombo();
+        
         comboFiltroCategoria.setFont(new java.awt.Font("Microsoft Tai Le", 0, 14));
         comboFiltroCategoria.addActionListener(evt -> cargarProductosDinamicamente());
 
@@ -89,6 +88,17 @@ public class MainConSesion extends javax.swing.JFrame {
         contentPane.repaint();
     }
 
+    private void cargarCategoriasEnCombo() {
+        comboFiltroCategoria.removeAllItems();
+
+        // Agregar opción "TODAS" primero
+        comboFiltroCategoria.addItem("TODAS");
+
+        // Cargar SOLO categorías de productos (no servicios)
+        for (String categoria : com.mycompany.tienda.ProductoBase.obtenerCategoriasProductos()) {
+            comboFiltroCategoria.addItem(categoria);
+        }
+    }
     private void cargarProductosDinamicamente() {
         inventario.removeAll();
 
@@ -238,6 +248,7 @@ public class MainConSesion extends javax.swing.JFrame {
         jMenu14 = new javax.swing.JMenu();
         jMenu15 = new javax.swing.JMenu();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         inventario = new javax.swing.JPanel();
@@ -248,6 +259,7 @@ public class MainConSesion extends javax.swing.JFrame {
         jMenuInventario = new javax.swing.JMenu();
         jMenuCategorias = new javax.swing.JMenu();
         jMenuServicios = new javax.swing.JMenu();
+        Reportes = new javax.swing.JMenu();
 
         jMenu1.setText("File");
         jMenuBar2.add(jMenu1);
@@ -289,6 +301,8 @@ public class MainConSesion extends javax.swing.JFrame {
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
+
+        jMenuItem3.setText("jMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -370,6 +384,14 @@ public class MainConSesion extends javax.swing.JFrame {
         });
         jMenuBar1.add(jMenuServicios);
 
+        Reportes.setText("Reportes");
+        Reportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ReportesMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(Reportes);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -377,13 +399,10 @@ public class MainConSesion extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(258, 258, 258)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 841, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -405,16 +424,32 @@ public class MainConSesion extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        Carrito cuf = new Carrito();
-        cuf.setVisible(true);
-        MainConSesion.this.dispose();
+        if (SistemaVentas.getEmpleadoActual() instanceof Cajero) {
+            Carrito gc = new Carrito();
+            gc.setVisible(true);
+            this.dispose();
+        } else if(SistemaVentas.getEmpleadoActual() instanceof Supervisor){
+            Carrito gc = new Carrito();
+            gc.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Solo cajeros y supervisores pueden acceder");
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 //aa
     private void jMenuClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuClientesMouseClicked
         // TODO add your handling code here:
-        Clientes cuf = new Clientes(SistemaVentas.getGestorClientes());
-        cuf.setVisible(true);
-        MainConSesion.this.dispose();
+        if (SistemaVentas.getEmpleadoActual() instanceof Cajero) {
+            Clientes cuf = new Clientes(SistemaVentas.getGestorClientes());
+            cuf.setVisible(true);
+            MainConSesion.this.dispose();
+        } else if(SistemaVentas.getEmpleadoActual() instanceof Supervisor){
+            Clientes cuf = new Clientes(SistemaVentas.getGestorClientes());
+            cuf.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Solo cajeros y supervisores pueden acceder");
+        }
     }//GEN-LAST:event_jMenuClientesMouseClicked
 
     private void jMenuInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuInventarioActionPerformed
@@ -422,9 +457,17 @@ public class MainConSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuInventarioActionPerformed
 
     private void jMenuInventarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuInventarioMouseClicked
-        GestionInventario inv = new GestionInventario();
-        inv.setVisible(true);
-        MainConSesion.this.dispose();
+        if (SistemaVentas.getEmpleadoActual() instanceof Cajero) {
+            GestionInventario inv = new GestionInventario();
+            inv.setVisible(true);
+            MainConSesion.this.dispose();
+        } else if (SistemaVentas.getEmpleadoActual() instanceof Supervisor) {
+            GestionInventario inv = new GestionInventario();
+            inv.setVisible(true);
+            MainConSesion.this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Solo cajeros y supervisores pueden acceder");
+        }
     }//GEN-LAST:event_jMenuInventarioMouseClicked
 
     private void jMenuCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCategoriasActionPerformed
@@ -446,6 +489,17 @@ public class MainConSesion extends javax.swing.JFrame {
         servicios.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jMenuServiciosMouseClicked
+
+    private void ReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportesMouseClicked
+        // TODO add your handling code here:
+        if (SistemaVentas.getEmpleadoActual() instanceof Supervisor) {
+            ReportesG gc = new ReportesG();
+            gc.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Solo supervisores pueden acceder");
+        }
+    }//GEN-LAST:event_ReportesMouseClicked
 
     /**
      * @param args the command line arguments
@@ -473,6 +527,7 @@ public class MainConSesion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu Reportes;
     private javax.swing.JPanel inventario;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
@@ -501,6 +556,7 @@ public class MainConSesion extends javax.swing.JFrame {
     private javax.swing.JMenu jMenuInventario;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenu jMenuServicios;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

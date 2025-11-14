@@ -25,6 +25,14 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SupervisorIniciarSActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <Menu class="javax.swing.JMenu" name="TecnicoInicioS">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Tecnico"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TecnicoInicioSMouseClicked"/>
+                  </Events>
+                </Menu>
                 <MenuItem class="javax.swing.JMenuItem" name="VendedorInicioS">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Cajero"/>
@@ -36,14 +44,6 @@
               </SubComponents>
             </Menu>
           </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="TecnicoInicioS">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Tecnico"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TecnicoInicioSMouseClicked"/>
-          </Events>
         </Menu>
       </SubComponents>
     </Menu>
@@ -83,7 +83,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" pref="110" max="-2" attributes="0"/>
-              <EmptySpace pref="336" max="32767" attributes="0"/>
+              <EmptySpace pref="343" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

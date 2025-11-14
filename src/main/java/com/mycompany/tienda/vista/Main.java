@@ -36,8 +36,8 @@ public class Main extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         SupervisorIniciarS = new javax.swing.JMenuItem();
-        VendedorInicioS = new javax.swing.JMenuItem();
         TecnicoInicioS = new javax.swing.JMenu();
+        VendedorInicioS = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +61,14 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu3.add(SupervisorIniciarS);
 
+        TecnicoInicioS.setText("Tecnico");
+        TecnicoInicioS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TecnicoInicioSMouseClicked(evt);
+            }
+        });
+        jMenu3.add(TecnicoInicioS);
+
         VendedorInicioS.setText("Cajero");
         VendedorInicioS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,14 +80,6 @@ public class Main extends javax.swing.JFrame {
         jMenu2.add(jMenu3);
 
         jMenuBar1.add(jMenu2);
-
-        TecnicoInicioS.setText("Tecnico");
-        TecnicoInicioS.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TecnicoInicioSMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(TecnicoInicioS);
 
         setJMenuBar(jMenuBar1);
 
@@ -97,7 +97,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(336, Short.MAX_VALUE))
+                .addContainerGap(343, Short.MAX_VALUE))
         );
 
         pack();

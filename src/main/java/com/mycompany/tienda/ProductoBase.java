@@ -17,20 +17,23 @@ public abstract class ProductoBase implements Vendido {
     private double precio;
     protected String categoria;
 
-    private static ArrayList<String> categoriasValidas = new ArrayList<>();
+    private static ArrayList<String> categoriasProductos = new ArrayList<>();
+    
+    private static ArrayList<String> categoriasServicios = new ArrayList<>();
 
     static {
-        categoriasValidas.add("COMPUTADORAS");
-        categoriasValidas.add("SMARTPHONES");
-        categoriasValidas.add("ACCESORIOS");
-        categoriasValidas.add("PERIFÉRICOS");
-        categoriasValidas.add("COMPONENTES");
-        categoriasValidas.add("SERVICIOS TÉCNICOS");
+        categoriasProductos.add("COMPUTADORAS");
+        categoriasProductos.add("SMARTPHONES");
+        categoriasProductos.add("ACCESORIOS");
+        categoriasProductos.add("PERIFÉRICOS");
+        categoriasProductos.add("COMPONENTES");
+        
+        categoriasServicios.add("SERVICIOS TÉCNICOS");
     }
 
     public ProductoBase(String nombre, double precio, String categoria) {
         setNombre(nombre);
-        setPrecio(precio); //constructor tenía validación en set pero no validaba en constructor.
+        setPrecio(precio);
         setCategoria(categoria);
     }
 
@@ -62,7 +65,6 @@ public abstract class ProductoBase implements Vendido {
     }
 
     public void setPrecio(double precio) {
-
         if (precio < 0.01) {
             throw new IllegalArgumentException("El precio mínimo es $0.01");
         }
@@ -77,11 +79,18 @@ public abstract class ProductoBase implements Vendido {
             return false;
         }
 
-        for (int i = 0; i < categoriasValidas.size(); i++) {
-            if (categoriasValidas.get(i).equals(categoria)) {
+        for (int i = 0; i < categoriasProductos.size(); i++) {
+            if (categoriasProductos.get(i).equals(categoria)) {
                 return true;
             }
         }
+        
+        for (int i = 0; i < categoriasServicios.size(); i++) {
+            if (categoriasServicios.get(i).equals(categoria)) {
+                return true;
+            }
+        }
+        
         return false;
     }
 
@@ -99,26 +108,43 @@ public abstract class ProductoBase implements Vendido {
 
         String categoriaMayuscula = categoria.trim().toUpperCase();
 
-        for (int i = 0; i < categoriasValidas.size(); i++) {
-            if (categoriasValidas.get(i).equals(categoriaMayuscula)) {
-                throw new IllegalArgumentException("La categoría ya existe");
+        for (int i = 0; i < categoriasProductos.size(); i++) {
+            if (categoriasProductos.get(i).equals(categoriaMayuscula)) {
+                throw new IllegalArgumentException("La categoría ya existe en productos");
+            }
+        }
+        
+        for (int i = 0; i < categoriasServicios.size(); i++) {
+            if (categoriasServicios.get(i).equals(categoriaMayuscula)) {
+                throw new IllegalArgumentException("La categoría ya existe en servicios");
             }
         }
 
-        categoriasValidas.add(categoriaMayuscula);
-        System.out.println("Categoría agregada: " + categoriaMayuscula);
+        categoriasProductos.add(categoriaMayuscula);
+        System.out.println("Categoría agregada a productos: " + categoriaMayuscula);
     }
-
+    
     public static void eliminarCategoria(String categoria) {
         String categoriaMayuscula = categoria.trim().toUpperCase();
-
         boolean eliminada = false;
-        for (int i = 0; i < categoriasValidas.size(); i++) {
-            if (categoriasValidas.get(i).equals(categoriaMayuscula)) {
-                categoriasValidas.remove(i);
+
+        
+        for (int i = 0; i < categoriasProductos.size(); i++) {
+            if (categoriasProductos.get(i).equals(categoriaMayuscula)) {
+                categoriasProductos.remove(i);
                 eliminada = true;
-                System.out.println("Categoría eliminada: " + categoriaMayuscula);
-                break;
+                System.out.println("Categoría eliminada de productos: " + categoriaMayuscula);
+                return;
+            }
+        }
+        
+       
+        for (int i = 0; i < categoriasServicios.size(); i++) {
+            if (categoriasServicios.get(i).equals(categoriaMayuscula)) {
+                categoriasServicios.remove(i);
+                eliminada = true;
+                System.out.println("Categoría eliminada de servicios: " + categoriaMayuscula);
+                return;
             }
         }
 
@@ -126,16 +152,36 @@ public abstract class ProductoBase implements Vendido {
             System.out.println("Categoría no encontrada");
         }
     }
-
-    public static ArrayList<String> obtenerCategorias() {
-        return categoriasValidas;
+    
+    public static ArrayList<String> obtenerCategoriasProductos() {
+        return new ArrayList<>(categoriasProductos);
     }
+    
+    public static ArrayList<String> obtenerCategoriasServicios() {
+        return new ArrayList<>(categoriasServicios);
+    }
+    
+    public static ArrayList<String> obtenerCategorias() {
+        ArrayList<String> todasCategorias = new ArrayList<>();
+        todasCategorias.addAll(categoriasProductos);
+        todasCategorias.addAll(categoriasServicios);
+        return todasCategorias;
+    }
+   
 
     public static void mostrarCategorias() {
-        System.out.println("\n CATEGORÍAS DISPONIBLES ");
-        for (int i = 0; i < categoriasValidas.size(); i++) {
-            System.out.println((i + 1) + ". " + categoriasValidas.get(i));
+        System.out.println("\nCATEGORÍAS DISPONIBLES");
+        
+        System.out.println("\nPRODUCTOS:");
+        for (int i = 0; i < categoriasProductos.size(); i++) {
+            System.out.println((i + 1) + ". " + categoriasProductos.get(i));
         }
-        System.out.println("Total: " + categoriasValidas.size() + " categorías");
+        
+        System.out.println("\nSERVICIOS:");
+        for (int i = 0; i < categoriasServicios.size(); i++) {
+            System.out.println((i + 1) + ". " + categoriasServicios.get(i));
+        }
+        
+        System.out.println("\nTotal: " + (categoriasProductos.size() + categoriasServicios.size()) + " categorías");
     }
 }

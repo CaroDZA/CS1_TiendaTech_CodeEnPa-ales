@@ -222,6 +222,7 @@ public class Venta {
         System.out.println("Estado: " + estado.getNombre());
     }
 
+    // Getters
     public String getEstadoActual() {
         return estado.getNombre();
     }
@@ -246,8 +247,12 @@ public class Venta {
         return items;
     }
 
-    public Venta(Cliente cliente) {
-        this.cliente = cliente;
+    public Cajero getCajero() {
+        return cajero;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
     public int getId() {

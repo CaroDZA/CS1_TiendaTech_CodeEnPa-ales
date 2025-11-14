@@ -536,7 +536,7 @@ public class ServiciosDigitalesGUI extends javax.swing.JFrame {
             }
         }
 
-        MainConSesion main = new MainConSesion();
+        Main main = new Main();
         main.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
